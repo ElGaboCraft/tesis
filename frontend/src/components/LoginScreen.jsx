@@ -27,12 +27,6 @@ export default function LoginScreen({ onLogin, loading, error }) {
         <p className="auth-copy">
           El acceso al tablero requiere autenticacion. Las tareas solo se asignan a usuarios registrados por el administrador root.
         </p>
-
-        <div className="credential-card">
-          <strong>Credenciales admin iniciales</strong>
-          <span>Usuario: root</span>
-          <span>Clave: Teyvat2025*</span>
-        </div>
       </section>
 
       <section className="auth-panel">

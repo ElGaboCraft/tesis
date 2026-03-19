@@ -131,17 +131,6 @@ textarea {
   font-size: 1.02rem;
 }
 
-.credential-card {
-  margin-top: 24px;
-  display: grid;
-  gap: 8px;
-  max-width: 300px;
-  padding: 18px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.62);
-  border: 1px solid rgba(29, 42, 47, 0.1);
-}
-
 .auth-panel h2,
 .admin-panel h2 {
   margin: 8px 0 0;
