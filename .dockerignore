@@ -1,0 +1,33 @@
+# .dockerignore — excluye archivos que no deben ir dentro de la imagen Docker.
+
+# Entornos virtuales y dependencias locales
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Base de datos local (producción usa Postgres)
+db.sqlite3
+
+# Archivos de entorno (se pasan por variables en docker-compose)
+.env
+*.env.local
+
+# Archivos estáticos recopilados (se generan en el contenedor)
+staticfiles/
+
+# Frontend (el backend no lo necesita)
+frontend/
+
+# Git y herramientas de desarrollo
+.git/
+.gitignore
+.github/
+
+# Documentación
+documentacion/
+
+# Artefactos del editor
+.vscode/
+*.swp

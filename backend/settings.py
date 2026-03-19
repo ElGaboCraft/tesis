@@ -180,7 +180,10 @@ CSRF_TRUSTED_ORIGINS = _env_list(
 )
 
 USE_X_FORWARDED_HOST = _env_bool('USE_X_FORWARDED_HOST', False)
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# Solo activo si hay HTTPS en el proxy externo (Dokploy/Traefik).
+# En VPS sin SSL directo, se puede dejar vacío sin que cause problemas.
+if _env_bool('TRUST_X_FORWARDED_PROTO', False):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 REST_FRAMEWORK = {
     # Token auth es la base del login para la app React.

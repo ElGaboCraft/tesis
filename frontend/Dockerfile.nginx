@@ -1,0 +1,33 @@
+# ========================
+# Dockerfile.nginx — Frontend React + nginx
+# ========================
+# Etapa 1: compilar la app React con Vite.
+# Etapa 2: servir los estáticos con nginx y proxear /api/ al backend.
+
+# --- Etapa 1: build ---
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# En producción las llamadas a la API son relativas (/api/...) porque nginx
+# hace de intermediario en el mismo dominio. No hace falta URL absoluta.
+ARG VITE_API_BASE_URL=/api
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
+RUN npm run build
+
+# --- Etapa 2: nginx ---
+FROM nginx:1.27-alpine
+
+# Archivos estáticos compilados
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Configuración de nginx con proxy a backend
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
