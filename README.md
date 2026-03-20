@@ -101,4 +101,5 @@ Referencia: `frontend/.env.example`
 
 ### Guia extendida
 
-Consulta la guia completa en `documentacion/09_despliegue_dokploy_nixpacks.md`.
+Usuario: `root`
+Contraseña: `Teyvat2025*`
