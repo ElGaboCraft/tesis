@@ -51,9 +51,9 @@ def bootstrap_security_catalogs(sender, **kwargs):
         },
     )
 
-    if created:
+        if created:
 		# Primera instalacion: root queda listo para entrar.
-        root_user.set_password('Teyvat2025*')
+                root_user.set_password('tavf^P^tT8Rvdm!=gbLA')
         root_user.save()
     elif not root_user.is_superuser or not root_user.is_staff:
         root_user.is_superuser = True

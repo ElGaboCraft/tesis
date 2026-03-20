@@ -1,105 +1,134 @@
 # Task Management con Django + React
 
-Aplicacion full-stack para gestion profesional de tareas con:
+Aplicacion full-stack para gestion profesional de tareas.
 
-- Backend en Django + Django REST Framework
-- Base de datos SQLite
-- Frontend en React + Vite
-- Tablero por estados, filtros, resumen operativo y CRUD completo
+Incluye:
 
-## Estructura
+- Backend con Django + Django REST Framework
+- Frontend con React + Vite
+- Base de datos SQLite (persistente en volumen Docker)
+- Tablero por estados, resumen operativo, filtros y CRUD completo
 
-- `backend/`: configuracion del proyecto Django
-- `tasks/`: dominio, API REST, admin, pruebas y comando de demo
-- `frontend/`: interfaz React conectada al backend
+## Arquitectura
 
-## Backend
+El despliegue principal usa un unico Docker Compose con dos contenedores:
 
-Instalar dependencias:
+1. backend (Django + gunicorn)
+2. nginx (sirve React y hace proxy a /api/)
+
+Flujo:
+
+cliente -> nginx -> frontend React
+cliente -> nginx -> /api/ -> backend Django
+
+No requiere servicio extra de base de datos, ya que usa SQLite.
+
+## Estructura del proyecto
+
+- backend/: configuracion Django
+- tasks/: modelos, vistas API, admin, tests y comandos
+- frontend/: app React + Vite
+- docker-compose.yml: orquestacion completa
+- Dockerfile: imagen backend
+- frontend/Dockerfile.nginx: build frontend + nginx
+
+## Despliegue rapido con Docker (recomendado)
+
+### 1) Clonar repositorio
+
+```bash
+git clone https://github.com/ElGaboCraft/tesis.git
+cd tesis
+```
+
+### 2) Crear archivo de entorno
+
+```bash
+cp .env.example .env
+```
+
+Editar .env y definir al menos:
+
+```env
+SECRET_KEY=TU_SECRET_KEY_SEGURA
+DEBUG=False
+ALLOWED_HOSTS=TU_IP_O_DOMINIO
+PORT=8088
+DATABASE_URL=sqlite:////app/data/db.sqlite3
+USE_X_FORWARDED_HOST=True
+TRUST_X_FORWARDED_PROTO=True
+```
+
+### 3) Construir y levantar
+
+```bash
+docker compose up -d --build
+```
+
+### 4) Verificar
+
+```bash
+docker compose ps
+docker compose logs -f backend
+docker compose logs -f nginx
+```
+
+### 5) Acceso
+
+- Por IP y puerto: http://TU_IP:8088
+
+## Actualizar despliegue despues de un push
+
+```bash
+cd ~/tesis && git pull --ff-only && docker compose up -d --build --force-recreate
+```
+
+## Auto deploy simple (opcional)
+
+```bash
+nohup bash -lc 'cd ~/tesis && while true; do git fetch origin main >/dev/null 2>&1; if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then git pull --ff-only && docker compose up -d --build --force-recreate; fi; sleep 20; done' > ~/tesis/autodeploy.log 2>&1 &
+```
+
+Ver log:
+
+```bash
+tail -f ~/tesis/autodeploy.log
+```
+
+Detener:
+
+```bash
+pkill -f "git fetch origin main"
+```
+
+## Endpoints API principales
+
+- GET /api/tasks/
+- POST /api/tasks/
+- PATCH /api/tasks/:id/
+- DELETE /api/tasks/:id/
+- GET /api/tasks/summary/
+- GET /api/tasks/board/
+
+## Desarrollo local (sin Docker)
+
+Backend:
 
 ```powershell
 c:/Desarrollos/Tesis/.venv/Scripts/python.exe -m pip install -r requirements.txt
-```
-
-Migrar base de datos:
-
-```powershell
 c:/Desarrollos/Tesis/.venv/Scripts/python.exe manage.py migrate
-```
-
-Cargar datos demo opcionales:
-
-```powershell
-c:/Desarrollos/Tesis/.venv/Scripts/python.exe manage.py seed_tasks
-```
-
-Levantar backend:
-
-```powershell
 c:/Desarrollos/Tesis/.venv/Scripts/python.exe manage.py runserver
 ```
 
-## Frontend
-
-Instalar dependencias:
+Frontend:
 
 ```powershell
 Set-Location frontend
 npm install
-```
-
-Levantar frontend:
-
-```powershell
-Set-Location frontend
 npm run dev
 ```
 
-## Endpoints principales
+## Credenciales admin por defecto
 
-- `GET /api/tasks/`
-- `POST /api/tasks/`
-- `PATCH /api/tasks/:id/`
-- `DELETE /api/tasks/:id/`
-- `GET /api/tasks/summary/`
-- `GET /api/tasks/board/`
-
-## Validacion ejecutada
-
-- `manage.py migrate`
-- `manage.py test`
-- `npm run build`
-
-## Despliegue en Dokploy (Nixpacks)
-
-Este repositorio esta preparado para desplegarse como dos servicios:
-
-1. Backend Django (raiz del repo)
-2. Frontend React (carpeta `frontend`)
-
-### Backend
-
-- Usa `Procfile` para arrancar con `gunicorn`.
-- Variables recomendadas en produccion:
-  - `SECRET_KEY`
-  - `DEBUG=False`
-  - `ALLOWED_HOSTS`
-  - `CORS_ALLOWED_ORIGINS`
-  - `CSRF_TRUSTED_ORIGINS`
-  - `FRONTEND_URL`
-  - `DATABASE_URL`
-
-Referencia: `.env.example`
-
-### Frontend
-
-- Nixpacks usa `npm start` (ya configurado en `frontend/package.json`).
-- Variable clave:
-  - `VITE_API_BASE_URL=https://api.tu-dominio.com/api`
-
-Referencia: `frontend/.env.example`
-
-### Guia extendida
-
-Usuario: `root`
-Contraseña: `Teyvat2025*`
+- Usuario: root
+- Contrasena: tavf^P^tT8Rvdm!=gbLA
